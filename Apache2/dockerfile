@@ -1,0 +1,27 @@
+FROM ubuntu:16.04
+LABEL maintainer="j.ajaynaidu@gmail.com"
+
+RUN apt-get -qq update && apt-get -qq install apache2 \
+ && apt-get clean && service apache2 stop
+
+ADD ./certs/ /etc/ssl/
+ADD ./site_conf/ /etc/apache2/sites-available/
+
+WORKDIR /var/www/html
+
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_PID_FILE /var/run/apache2.pid
+ENV APACHE_RUN_DIR /var/run/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+
+RUN mkdir -p $APACHE_RUN_DIR $APACHE_LOCK_DIR $APACHE_LOG_DIR \
+ && chmod 644 /etc/ssl/* && chmod 644 /etc/apache2/conf-available/* \
+ && chmod 644 /etc/apache2/apache2.conf 
+ ##&& a2enmod headers rewrite proxy proxy_http ssl 
+
+EXPOSE 80
+EXPOSE 443
+
+CMD ["apachectl", "-D", "FOREGROUND"]
