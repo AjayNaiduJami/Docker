@@ -1,0 +1,9 @@
+FROM ubuntu:18.04
+LABEL maintainer="j.ajaynaidu@gmail.com"
+
+RUN apt-get update && apt-get install -y openjdk-8-jdk maven \
+ && apt-get clean \
+ && mkdir /app
+
+WORKDIR /app/
+CMD ["/app/script.sh"]

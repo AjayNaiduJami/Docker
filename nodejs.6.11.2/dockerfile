@@ -1,0 +1,17 @@
+FROM ubuntu:18.04
+LABEL maintainer="j.ajaynaidu@gmail.com"
+
+RUN apt-get -qq update && apt-get install --no-install-recommends -y wget python git-core \
+ && apt-get clean \
+ && wget --no-check-certificate https://nodejs.org/dist/v6.11.2/node-v6.11.2-linux-x64.tar.gz \
+ && tar -xvf node-v6.11.2-linux-x64.tar.gz \
+ && rm node-v6.11.2-linux-x64.tar.gz \
+ && mv node-v6.11.2-linux-x64 /usr/local/ \
+ && ln -s /usr/local/node-v6.11.2-linux-x64/bin/node /usr/bin/node \
+ && ln -s /usr/local/node-v6.11.2-linux-x64/bin/npm /usr/bin/npm \
+ && /usr/local/node-v6.11.2-linux-x64/bin/npm install -g @angular/cli \
+ && ln -s /usr/local/node-v6.11.2-linux-x64/bin/ng /usr/bin/ng \
+ && mkdir /app
+
+WORKDIR /app/
+CMD ["/app/script.sh"]

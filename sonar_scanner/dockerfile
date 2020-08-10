@@ -1,0 +1,15 @@
+FROM ubuntu:18.04
+LABEL maintainer="j.ajaynaidu@gmail.com"
+
+RUN apt-get update && apt-get install --no-install-recommends -y wget unzip \
+ && apt-get clean \
+ && wget --no-check-certificate https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170-linux.zip \
+ && unzip sonar-scanner-cli-4.4.0.2170-linux.zip \
+ && rm sonar-scanner-cli-4.4.0.2170-linux.zip \
+ && mv sonar-scanner-4.4.0.2170-linux /usr/local/ \
+ && ln -s /usr/local/sonar-scanner-4.4.0.2170-linux/bin/sonar-scanner /usr/bin/sonar-scanner \
+ && mkdir /app
+ADD sonar-scanner.properties /usr/local/sonar-scanner-4.4.0.2170-linux/conf/
+
+WORKDIR /app/
+CMD ["/app/script.sh"]
