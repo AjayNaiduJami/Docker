@@ -1,0 +1,28 @@
+FROM ubuntu:18.04
+LABEL name="Android_Build"
+LABEL maintainer="j.ajaynaidu@gmail.com"
+
+ENV ANDROID_HOME /opt/android_linux_sdk/
+
+RUN apt-get update && apt-get install -y openjdk-8-jdk wget unzip git python \
+ && mkdir -p ${ANDROID_HOME} /root/.android /app/ && cd ${ANDROID_HOME} \
+ && wget -q https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip -O android_tools.zip \
+ && unzip android_tools.zip && rm android_tools.zip \
+ && wget --no-check-certificate https://nodejs.org/dist/v12.16.1/node-v12.16.1-linux-x64.tar.gz \
+ && tar -xvf node-v12.16.1-linux-x64.tar.gz \
+ && rm node-v12.16.1-linux-x64.tar.gz \
+ && mv node-v12.16.1-linux-x64 /usr/local/ \
+ && ln -s /usr/local/node-v12.16.1-linux-x64/bin/node /usr/bin/node \
+ && ln -s /usr/local/node-v12.16.1-linux-x64/bin/npm /usr/bin/npm \
+ && ln -s /usr/local/node-v12.16.1-linux-x64/bin/npx /usr/bin/npx \
+ && /usr/local/node-v12.16.1-linux-x64/bin/npm install -g react-native-cli \
+ && ln -s /usr/local/node-v12.16.1-linux-x64/bin/react-native /usr/bin/react-native
+
+ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/build-tools:${GRADLE_HOME}/gradle-4.1/bin
+
+RUN touch /root/.android/repositories.cfg && yes | sdkmanager --licenses \
+ && sdkmanager --update && apt-get update \
+ && apt-get install -y build-essential file apt-utils && apt-get clean
+
+WORKDIR /app/
+CMD ["/app/script.sh"]
